@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<title>Chinese Chess Short Code</title>
+<style>
+#code { font-family: monospace; width: 500px; }
+/* #board { border: 1px solid #ccc; } */
+</style>
+<body>
+<textarea id="code">210 320 630 540 150 560 670 380 290 422 482 713 733 753 773 793
+,210 320 630 540 150 560 670 380 290 422 482 713 733 753 773 793</textarea>
+<button id="save">儲存</button>
+<p/>
+<canvas id="board" width="463" height="495"></canvas>
+<script>
+    // board = new Image(); board.src = "board.gif";
+    pieces = new Image(); pieces.src = "piece.gif";
+    piecesbw = new Image(); piecesbw.src = "piecebw.gif";
+    const pieceW = 47, pieceH = 45;
+    const pieceS = 5;
+    const boardW = (pieceW + pieceS) * 9 - pieceS, boardH = (pieceH + pieceS) * 10 - pieceS;
+
+    var boardCanvas = document.getElementById("board");
+    var board = boardCanvas.getContext("2d");
+
+    function parse(input) {
+        const sides = input.split(/[^\d\s]/);
+        return sides.map(side => (
+            side.match(/\d{3}/g).map(parts => parts.match(/\d/g).map(x => ~~x))
+        ));
+    }
+
+    function draw(input) {
+        drawBoard();
+        const sides = parse(input);
+        for (const side of [0, 1]) {
+            for (const parts of sides[side]) {
+                const piece = ~~parts[0];
+                const x = ~~parts[1] - 1;
+                const y = side == 0 ? 9 - ~~parts[2] : ~~parts[2];
+                // context.drawImage(img, x, y, swidth, sheight, sx, sy, width, height);
+                const args = [
+                    pieceW * (piece - 1), pieceH * side,
+                    pieceW, pieceH,
+                    (pieceW + pieceS) * x, (pieceH + pieceS) * y,
+                    pieceW, pieceH,
+                ];
+                // console.log(`side=${side} `, `input=${parts} `, `adjusted=${piece},${x},${y} `, "output=", ...args);
+                board.drawImage(pieces, ...args);
+            }
+        }
+    }
+
+    function drawLine(x1, y1, x2, y2) {
+        board.beginPath();
+        board.moveTo((x1 + 0.5) * (pieceW + pieceS) - 0.5, (y1 + 0.5) * (pieceH + pieceS) - 0.5);
+        board.lineTo((x2 + 0.5) * (pieceW + pieceS) - 0.5, (y2 + 0.5) * (pieceH + pieceS) - 0.5);
+        board.stroke();
+    }
+
+    function drawBoard() {
+        board.clearRect(0, 0, boardW, boardH);
+        for (y = 0; y < 10; ++y) {
+            drawLine(0, y, 8, y);
+        }
+        for (x = 0; x < 9; ++x) {
+            drawLine(x, 0, x, 4);
+            drawLine(x, 5, x, 9);
+        }
+        drawLine(0, 4, 0, 5);
+        drawLine(8, 4, 8, 5);
+        drawLine(3, 0, 5, 2);
+        drawLine(3, 2, 5, 0);
+        drawLine(3, 7, 5, 9);
+        drawLine(3, 9, 5, 7);
+    }
+
+    function save(input) {
+        const summary = parse(input).map(pieces => (
+            pieces.reduce((a, c) => (++a[c[0]-1], a), Array(7).fill(0)).join("")
+        )).join("-");
+        const dataURI = boardCanvas.toDataURL();
+        console.log(dataURI);
+        var newDataURI = dataURI.replace(/^data:image\/png/, "data:application/octet-stream");
+        console.log(newDataURI);
+        const aLink = document.createElement('a');
+        const evt = document.createEvent("HTMLEvents");
+        evt.initEvent("click");
+        aLink.download = `${summary}.png`;
+        aLink.href = newDataURI;
+        aLink.dispatchEvent(evt);
+    }
+
+    document.getElementById("save").addEventListener("click", function () {
+        save(document.getElementById("code").value);
+    });
+    document.getElementById("code").addEventListener("input", function () {
+        draw(document.getElementById("code").value);
+    });
+    document.body.onload = () => {
+        draw(document.getElementById("code").value);
+    }
+</script>
+</body>
+</html>
