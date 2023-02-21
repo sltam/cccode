@@ -2,7 +2,7 @@
 <html>
 <title>Chinese Chess Short Code</title>
 <style>
-#code { font-family: monospace; width: 500px; }
+#code { font-family: monospace; width: 550px; }
 /* #board { border: 1px solid #ccc; } */
 </style>
 <body>
@@ -59,6 +59,8 @@
 
     function drawBoard() {
         board.clearRect(0, 0, boardW, boardH);
+        board.fillStyle = "white";
+        board.fillRect(0, 0, boardW, boardH);
         for (y = 0; y < 10; ++y) {
             drawLine(0, y, 8, y);
         }
