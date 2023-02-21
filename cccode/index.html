@@ -85,11 +85,9 @@
         var newDataURI = dataURI.replace(/^data:image\/png/, "data:application/octet-stream");
         console.log(newDataURI);
         const aLink = document.createElement('a');
-        const evt = document.createEvent("HTMLEvents");
-        evt.initEvent("click");
         aLink.download = `${summary}.png`;
         aLink.href = newDataURI;
-        aLink.dispatchEvent(evt);
+        aLink.click();
     }
 
     document.getElementById("save").addEventListener("click", function () {
