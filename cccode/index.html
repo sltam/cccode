@@ -8,6 +8,8 @@
 <body>
 <textarea id="code">210 320 630 540 150 560 670 380 290 422 482 713 733 753 773 793
 ,210 320 630 540 150 560 670 380 290 422 482 713 733 753 773 793</textarea>
+<p/>
+<input type="checkbox" id="color" checked>彩色</button>
 <button id="save">儲存</button>
 <p/>
 <canvas id="board" width="463" height="495"></canvas>
@@ -29,7 +31,9 @@
         ));
     }
 
-    function draw(input) {
+    function draw() {
+        const input = document.getElementById("code").value;
+        const color = document.getElementById("color").checked;
         drawBoard();
         const sides = parse(input);
         for (const side of [0, 1]) {
@@ -45,7 +49,11 @@
                     pieceW, pieceH,
                 ];
                 // console.log(`side=${side} `, `input=${parts} `, `adjusted=${piece},${x},${y} `, "output=", ...args);
-                board.drawImage(pieces, ...args);
+                if (color) {
+                    board.drawImage(pieces, ...args);
+                } else {
+                    board.drawImage(piecesbw, ...args);
+                }
             }
         }
     }
@@ -76,7 +84,8 @@
         drawLine(3, 9, 5, 7);
     }
 
-    function save(input) {
+    function save() {
+        const input = document.getElementById("code").value;
         const summary = parse(input).map(pieces => (
             pieces.reduce((a, c) => (++a[c[0]-1], a), Array(7).fill(0)).join("")
         )).join("-");
@@ -90,15 +99,10 @@
         aLink.click();
     }
 
-    document.getElementById("save").addEventListener("click", function () {
-        save(document.getElementById("code").value);
-    });
-    document.getElementById("code").addEventListener("input", function () {
-        draw(document.getElementById("code").value);
-    });
-    document.body.onload = () => {
-        draw(document.getElementById("code").value);
-    }
+    document.getElementById("save").addEventListener("click", save);
+    document.getElementById("code").addEventListener("input", draw);
+    document.getElementById("color").addEventListener("input", draw);
+    window.addEventListener("load", draw);
 </script>
 </body>
 </html>
