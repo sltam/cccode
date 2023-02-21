@@ -7,7 +7,7 @@
 </style>
 <body>
 <textarea id="code">210 320 630 540 150 560 670 380 290 422 482 713 733 753 773 793
-,210 320 630 540 150 560 670 380 290 422 482 713 733 753 773 793</textarea>
+210 320 630 540 150 560 670 380 290 422 482 713 733 753 773 793</textarea>
 <p/>
 <input type="checkbox" id="color" checked>彩色</button>
 <button id="save">儲存</button>
@@ -25,7 +25,7 @@
     var board = boardCanvas.getContext("2d");
 
     function parse(input) {
-        const sides = input.split(/[^\d\s]/);
+        const sides = input.split(/[^\d ]+/);
         return sides.map(side => (
             side.match(/\d{3}/g).map(parts => parts.match(/\d/g).map(x => ~~x))
         ));
