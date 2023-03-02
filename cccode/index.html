@@ -39,7 +39,7 @@
         for (const side of [0, 1]) {
             for (const parts of sides[side]) {
                 const piece = ~~parts[0];
-                const x = ~~parts[1] - 1;
+                const x = side == 0 ? ~~parts[1] - 1 : 9 - ~~parts[1];
                 const y = side == 0 ? 9 - ~~parts[2] : ~~parts[2];
                 // context.drawImage(img, x, y, swidth, sheight, sx, sy, width, height);
                 const args = [
